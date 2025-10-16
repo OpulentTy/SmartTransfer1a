@@ -1,0 +1,43 @@
+name: Build SmartTransfer1a APK
+
+on:
+  workflow_dispatch:        # run manually from the Actions tab
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repo
+      uses: actions/checkout@v4
+
+    - name: Set up JDK
+      uses: actions/setup-java@v4
+      with:
+        distribution: 'temurin'
+        java-version: '17'
+
+    - name: Download & unzip project
+      run: |
+        sudo apt-get update -y
+        sudo apt-get install -y unzip
+        unzip SmartTransfer1a_project.zip -d SmartTransfer1a
+
+    - name: Build APK
+      uses: reactivecircus/android-emulator-runner@v2
+      with:
+        api-level: 33
+        script: |
+          cd SmartTransfer1a
+          echo "Building SmartTransfer1a..."
+          bash -c "find . -name '*.java'"
+          # Minimal manual build using sdkmanager + javac + dx + aapt2
+          sudo apt-get install -y android-sdk-build-tools
+          mkdir -p build/apk
+          echo "(placeholder build logic for AIDE-format project)"
+
+    - name: Upload artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: SmartTransfer1a_APK
+        path: SmartTransfer1a/build/apk/*.apk
